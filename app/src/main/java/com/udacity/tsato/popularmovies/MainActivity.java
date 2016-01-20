@@ -14,6 +14,10 @@ import android.widget.GridView;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,12 +30,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
+    private final String TAG = "MainActivity";
     private final String URL_END_POINT = "https://api.themoviedb.org/3";
     private final String FUNC_POPULAR = "/discover/movie?sort_by=popularity.desc";
     private final String FUNC_HIGH_RATED = "/discover/movie/?certification_country=US&sort_by=vote_average.desc";
     private final String API_KEY = "&api_key=0cba6b4bacdd159b108b2d7bc6ffe72b";
-
-    private OkHttpClient mOkHttpClient = new OkHttpClient();
 
     private GridView mThumbnailsGridView;
     private List<String> mThumbnailList = new ArrayList<>();
@@ -58,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
             String result = null;
 
             Request request = new Request.Builder()
-                    //.url("https://api.themoviedb.org/3/movie/550?api_key=0cba6b4bacdd159b108b2d7bc6ffe72b")
                     .url(params[0])
                     .get()
                     .build();
@@ -76,7 +78,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void onPostExecute(String result) {
-            Log.d("test", result);
+            //Log.d(TAG, result);
+
+            JSONObject jsonObject = null;
+            JSONArray jsonArray = null;
+
+            try {
+                jsonObject = new JSONObject(result);
+                jsonArray = jsonObject.getJSONArray("results");
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject j = jsonArray.getJSONObject(i);
+                    //Log.d(TAG, j.getString("poster_path"));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
