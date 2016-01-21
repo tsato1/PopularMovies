@@ -1,54 +1,54 @@
 package com.udacity.tsato.popularmovies;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
-/**
- * Created by T on 2016/01/19.
- */
 public class GridAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private int mLayoutId;
-    private List<String> mImageList;
+    private List<MovieItem> mMovieList;
 
-    public GridAdapter(Context context, int layoutId, List<String> imageList){
+    public GridAdapter(Context context, int layoutId, List<MovieItem> movieList){
         super();
         mContext = context;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mLayoutId = layoutId;
-        mImageList = imageList;
+        mMovieList = movieList;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        String pathName = mImageList.get(position);
+        MovieItem item = mMovieList.get(position);
 
         if (convertView == null) {
             convertView = mInflater.inflate(mLayoutId, parent, false);
+            convertView.setMinimumWidth(MainActivity.screen_width/2);
         }
 
-        Bitmap bitmap = BitmapFactory.decodeFile(pathName);
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.imv_thumbnail);
+        //imageView.setImageBitmap(item.getPoster());
+        Picasso.with(mContext).load(MainActivity.URL_IMG_BASE + "w500/" + item.posterPath).into(imageView);
 
         return convertView;
     }
 
     public int getCount() {
-        return mImageList.size();
+        return mMovieList.size();
     }
 
     public Object getItem(int position) {
-        return null;
+        return mMovieList.get(position);
     }
 
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 }

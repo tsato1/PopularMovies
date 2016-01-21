@@ -15,5 +15,10 @@
     <GridView
         android:id="@+id/grv_thumbnails"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="0dp"
+        android:horizontalSpacing="0dp"
+        android:gravity="center"
+        android:stretchMode="columnWidth"/>
 </RelativeLayout>
