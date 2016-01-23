@@ -3,4 +3,8 @@
     <string name="action_most_poplr">Most Popular</string>
     <string name="action_high_rated">High Rated</string>
 
+    <string name="ok">OK</string>
+
+    <string name="error_no_internet">No Internet Connection</string>
+    <string name="error_please_connect_internet">Please connect to the internet.</string>
 </resources>

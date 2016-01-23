@@ -1,7 +1,12 @@
 package com.udacity.tsato.popularmovies;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -36,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String URL_IMG_BASE = "http://image.tmdb.org/t/p/";
     public static final String FUNC_MOST_POPLR = "/discover/movie?sort_by=popularity.desc";
     public static final String FUNC_HIGH_RATED = "/discover/movie/?certification_country=US&sort_by=vote_average.desc";
-    public static final String API_KEY = "&api_key=???";
+    public static final String API_KEY = "&api_key=0cba6b4bacdd159b108b2d7bc6ffe72b";
     public static final String JSON_ENTRY_RESULTS = "results";
     public static final String JSON_ENTRY_TITLE = "original_title";
     public static final String JSON_ENTRY_POSTER_PATH = "poster_path";
@@ -46,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static int screen_width;
     public static int screen_height;
+    public static String url;
 
     private GridView mThumbnailsGridView = null;
     private GridAdapter mGridAdapter = null;
@@ -58,26 +64,57 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        url = URL_END_POINT + FUNC_MOST_POPLR + API_KEY;
+        fetchData();
+    }
 
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        screen_width = metrics.widthPixels;
-        screen_height = metrics.heightPixels;
+    public boolean isConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netinfo = cm.getActiveNetworkInfo();
 
-        new HTTPAsyncTask().execute(URL_END_POINT + FUNC_MOST_POPLR + API_KEY);
+        if (netinfo != null && netinfo.isConnectedOrConnecting()) {
+            android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-        mThumbnailsGridView = (GridView) findViewById(R.id.grv_thumbnails);
-        mGridAdapter = new GridAdapter(getApplicationContext(), R.layout.grid_items, mMovielList);
-        mThumbnailsGridView.setAdapter(mGridAdapter);
-        mThumbnailsGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                MovieItem item = (MovieItem) parent.getItemAtPosition(position);
-                Intent intent = new Intent(MainActivity.this, MovieDetailActivity.class);
-                intent.putExtra("itemSerializable", item);
-                startActivity(intent);
+            if((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting())){
+                return true;
             }
-        });
+            else return false;
+        } else return false;
+    }
+
+    private void fetchData() {
+        if (!isConnected()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.error_no_internet);
+            builder.setMessage(R.string.error_please_connect_internet);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            builder.show();
+        } else {
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            screen_width = metrics.widthPixels;
+            screen_height = metrics.heightPixels;
+
+            new HTTPAsyncTask().execute(url);
+
+            mThumbnailsGridView = (GridView) findViewById(R.id.grv_thumbnails);
+            mGridAdapter = new GridAdapter(getApplicationContext(), R.layout.grid_items, mMovielList);
+            mThumbnailsGridView.setAdapter(mGridAdapter);
+            mThumbnailsGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                    MovieItem item = (MovieItem) parent.getItemAtPosition(position);
+                    Intent intent = new Intent(MainActivity.this, MovieDetailActivity.class);
+                    intent.putExtra("itemSerializable", item);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     public class HTTPAsyncTask extends AsyncTask<String, Void, String> {
@@ -152,10 +189,12 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_popular) {
-            new HTTPAsyncTask().execute(URL_END_POINT + FUNC_MOST_POPLR + API_KEY);
+            url = URL_END_POINT + FUNC_MOST_POPLR + API_KEY;
+            fetchData();
             return true;
         } else if (id == R.id.action_top_rated) {
-            new HTTPAsyncTask().execute(URL_END_POINT + FUNC_HIGH_RATED + API_KEY);
+            url = URL_END_POINT + FUNC_HIGH_RATED + API_KEY;
+            fetchData();
             return true;
         }
 
