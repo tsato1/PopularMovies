@@ -5,15 +5,13 @@ import android.graphics.Bitmap;
 import java.io.Serializable;
 
 public class MovieItem implements Serializable {
-    Bitmap poster;
     String posterPath;
     String title;
     String releaseDate;
     String voteAverage;
     String synopsis;
 
-    public MovieItem(Bitmap poster, String posterPath, String title, String releaseDate, String voteAverage, String synopsis) {
-        this.poster = poster;
+    public MovieItem(String posterPath, String title, String releaseDate, String voteAverage, String synopsis) {
         this.posterPath = posterPath;
         this.title = title;
         this.releaseDate = releaseDate;
