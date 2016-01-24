@@ -12,6 +12,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class GridAdapter extends BaseAdapter {
+    private ViewHolder mViewHolder = new ViewHolder();
     private Context mContext;
     private LayoutInflater mInflater;
     private int mLayoutId;
@@ -30,11 +31,14 @@ public class GridAdapter extends BaseAdapter {
 
         if (convertView == null) {
             convertView = mInflater.inflate(mLayoutId, parent, false);
+            mViewHolder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.imv_thumbnail);
+            convertView.setTag(mViewHolder);
+        } else {
+            mViewHolder = (ViewHolder) convertView.getTag();
         }
 
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.imv_thumbnail);
         //imageView.setImageBitmap(item.getPoster());
-        Picasso.with(mContext).load(MainActivity.URL_IMG_BASE + "w500/" + item.posterPath).into(imageView);
+        Picasso.with(mContext).load(MainActivity.URL_IMG_BASE + "w500/" + item.posterPath).into(mViewHolder.thumbnailImageView);
 
         return convertView;
     }
