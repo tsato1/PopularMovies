@@ -30,7 +30,6 @@ public class GridAdapter extends BaseAdapter {
 
         if (convertView == null) {
             convertView = mInflater.inflate(mLayoutId, parent, false);
-            convertView.setMinimumWidth(MainActivity.screen_width/2);
         }
 
         ImageView imageView = (ImageView) convertView.findViewById(R.id.imv_thumbnail);

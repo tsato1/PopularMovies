@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String URL_IMG_BASE = "http://image.tmdb.org/t/p/";
     public static final String FUNC_MOST_POPLR = "/discover/movie?sort_by=popularity.desc";
     public static final String FUNC_HIGH_RATED = "/discover/movie/?certification_country=US&sort_by=vote_average.desc";
-    public static final String API_KEY = "???";
+    public static final String API_KEY = "";
     public static final String JSON_ENTRY_RESULTS = "results";
     public static final String JSON_ENTRY_TITLE = "original_title";
     public static final String JSON_ENTRY_POSTER_PATH = "poster_path";
@@ -32,9 +32,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String JSON_ENTRY_RELEASE_DATE = "release_date";
     public static final String JSON_ENTRY_VOTE_AVERAGE = "vote_average";
 
-    static int screen_width;
-    static int screen_height;
-    static String url;
+    static String url = URL_END_POINT + FUNC_MOST_POPLR + API_KEY;
 
     private TextView mConnectivityTextView = null;
     private ProgressBar mProgressBar = null;
@@ -63,28 +61,31 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
 
-        url = URL_END_POINT + FUNC_MOST_POPLR + API_KEY;
+    @Override
+    public void onResume() {
+        super.onResume();
         fetchData();
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
+        outState.putString("url", url);
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
+        savedInstanceState.getString("url", url);
     }
 
     public void fetchData() {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        screen_width = metrics.widthPixels;
-        screen_height = metrics.heightPixels;
 
         new HTTPAsyncTask(MainActivity.this, mMovielList, mGridAdapter, mConnectivityTextView, mProgressBar).execute(url);
     }
