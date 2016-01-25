@@ -24,6 +24,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class HTTPAsyncTask extends AsyncTask<String, Void, String> {
+    private final String TAG = "HTTPAsyncTask";
+
+    private static boolean isNetworkAvailable = false;
+
     private Context mContext;
     private List<MovieItem> mMovielList = new ArrayList<>();
     private GridAdapter mGridAdapter;
@@ -54,7 +58,11 @@ public class HTTPAsyncTask extends AsyncTask<String, Void, String> {
 
         try {
             Response response = okHttpClient.newCall(request).execute();
-            if (response.code() == 200) result = response.body().string();
+            if (response.code() == 200) {
+                result = response.body().string();
+                isNetworkAvailable = true;
+            }
+            else isNetworkAvailable = false;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,15 +100,15 @@ public class HTTPAsyncTask extends AsyncTask<String, Void, String> {
                     );
 
                     mMovielList.add(item);
-                    //Log.d(TAG, j.getString(JSON_ENTRY_POSTER_PATH));
+                    Log.d(TAG, j.getString(MainActivity.JSON_ENTRY_POSTER_PATH));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        if (mMovielList.size() == 0) mTextView.setVisibility(View.VISIBLE);
-        else mTextView.setVisibility(View.GONE);
+        if (isNetworkAvailable) mTextView.setVisibility(View.GONE);
+        else mTextView.setVisibility(View.VISIBLE);
 
         mGridAdapter.notifyDataSetChanged();
         showProgress(false);

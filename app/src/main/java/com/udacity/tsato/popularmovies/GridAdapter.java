@@ -12,7 +12,6 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class GridAdapter extends BaseAdapter {
-    private ViewHolder mViewHolder = new ViewHolder();
     private Context mContext;
     private LayoutInflater mInflater;
     private int mLayoutId;
@@ -28,17 +27,18 @@ public class GridAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         MovieItem item = mMovieList.get(position);
+        ViewHolder viewHolder;
 
         if (convertView == null) {
             convertView = mInflater.inflate(mLayoutId, parent, false);
-            mViewHolder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.imv_thumbnail);
-            convertView.setTag(mViewHolder);
+            viewHolder = new ViewHolder();
+            viewHolder.thumbnailImageView = (ImageView) convertView.findViewById(R.id.imv_thumbnail);
+            convertView.setTag(viewHolder);
         } else {
-            mViewHolder = (ViewHolder) convertView.getTag();
+            viewHolder = (ViewHolder) convertView.getTag();
         }
-
         //imageView.setImageBitmap(item.getPoster());
-        Picasso.with(mContext).load(MainActivity.URL_IMG_BASE + "w500/" + item.posterPath).into(mViewHolder.thumbnailImageView);
+        Picasso.with(mContext).load(MainActivity.URL_IMG_BASE + "w500/" + item.posterPath).into(viewHolder.thumbnailImageView);
 
         return convertView;
     }
@@ -53,5 +53,9 @@ public class GridAdapter extends BaseAdapter {
 
     public long getItemId(int position) {
         return position;
+    }
+
+    static class ViewHolder {
+        ImageView thumbnailImageView;
     }
 }
