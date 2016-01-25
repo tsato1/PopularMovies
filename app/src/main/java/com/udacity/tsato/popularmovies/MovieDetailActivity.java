@@ -25,7 +25,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         Bundle args = getIntent().getExtras();
-        MovieItem item = (MovieItem) args.getSerializable("itemSerializable");
+        MovieItem item = (MovieItem) args.getParcelable("item");
 
         mPosterImageView = (ImageView) findViewById(R.id.imv_poster);
         Picasso.with(getApplicationContext()).load(MainActivity.URL_IMG_BASE + "w500/" + item.posterPath).into(mPosterImageView);

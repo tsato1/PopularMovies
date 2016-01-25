@@ -43,12 +43,13 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.grv_thumbnails) GridView mThumbnailsGridView;
     @OnItemClick(R.id.grv_thumbnails)
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-        MovieItem item = (MovieItem) parent.getItemAtPosition(position);
+        mMovieItem = (MovieItem) parent.getItemAtPosition(position);
         Intent intent = new Intent(MainActivity.this, MovieDetailActivity.class);
-        intent.putExtra("itemSerializable", item);
+        intent.putExtra("item", mMovieItem);
         startActivity(intent);
     }
 
+    private MovieItem mMovieItem;
     private GridAdapter mGridAdapter = null;
     private List<MovieItem> mMovielList = new ArrayList<>();
 
@@ -74,15 +75,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
+        outState.putParcelable("item", mMovieItem);
         outState.putString("url", url);
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-
-        savedInstanceState.getString("url", url);
+        mMovieItem = savedInstanceState.getParcelable("item");
+        url = savedInstanceState.getString("url");
     }
 
     public void fetchData() {
