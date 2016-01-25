@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +15,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnItemClick;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
@@ -34,9 +38,17 @@ public class MainActivity extends AppCompatActivity {
 
     static String url = URL_END_POINT + FUNC_MOST_POPLR + API_KEY;
 
-    private TextView mConnectivityTextView = null;
-    private ProgressBar mProgressBar = null;
-    private GridView mThumbnailsGridView = null;
+    @Bind(R.id.txv_no_connectivity) TextView mConnectivityTextView;
+    @Bind(R.id.progress) ProgressBar mProgressBar;
+    @Bind(R.id.grv_thumbnails) GridView mThumbnailsGridView;
+    @OnItemClick(R.id.grv_thumbnails)
+    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+        MovieItem item = (MovieItem) parent.getItemAtPosition(position);
+        Intent intent = new Intent(MainActivity.this, MovieDetailActivity.class);
+        intent.putExtra("itemSerializable", item);
+        startActivity(intent);
+    }
+
     private GridAdapter mGridAdapter = null;
     private List<MovieItem> mMovielList = new ArrayList<>();
 
@@ -47,20 +59,10 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mConnectivityTextView = (TextView) findViewById(R.id.txv_no_connectivity);
-        mProgressBar = (ProgressBar) findViewById(R.id.progress);
-        mThumbnailsGridView = (GridView) findViewById(R.id.grv_thumbnails);
+        ButterKnife.bind(this);
+
         mGridAdapter = new GridAdapter(getApplicationContext(), R.layout.grid_items, mMovielList);
         mThumbnailsGridView.setAdapter(mGridAdapter);
-        mThumbnailsGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                MovieItem item = (MovieItem) parent.getItemAtPosition(position);
-                Intent intent = new Intent(MainActivity.this, MovieDetailActivity.class);
-                intent.putExtra("itemSerializable", item);
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
