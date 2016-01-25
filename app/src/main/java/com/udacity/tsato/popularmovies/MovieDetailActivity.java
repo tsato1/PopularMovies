@@ -29,7 +29,6 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         mPosterImageView = (ImageView) findViewById(R.id.imv_poster);
         Picasso.with(getApplicationContext()).load(MainActivity.URL_IMG_BASE + "w500/" + item.posterPath).into(mPosterImageView);
-        //mPosterImageView.setImageBitmap(item.getPoster());
         mTitleTextView = (TextView) findViewById(R.id.txv_title);
         mTitleTextView.setText(item.title);
         mReleaseDateTextView = (TextView) findViewById(R.id.txv_release_date);

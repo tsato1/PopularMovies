@@ -87,9 +87,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void fetchData() {
-        //DisplayMetrics metrics = new DisplayMetrics();
-        //getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
         new HTTPAsyncTask(MainActivity.this, mMovielList, mGridAdapter, mConnectivityTextView, mProgressBar).execute(url);
     }
 

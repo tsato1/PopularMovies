@@ -37,7 +37,7 @@ public class GridAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        //imageView.setImageBitmap(item.getPoster());
+
         Picasso.with(mContext).load(MainActivity.URL_IMG_BASE + "w500/" + item.posterPath).into(viewHolder.thumbnailImageView);
 
         return convertView;
