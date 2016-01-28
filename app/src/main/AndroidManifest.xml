@@ -11,6 +11,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <provider
+            android:authorities="udacity.tsato"
+            android:name=".DBContentProvider"
+            android:exported="true"/>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
