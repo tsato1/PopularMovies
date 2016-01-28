@@ -1,35 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.udacity.tsato.popularmovies.MainActivity"
-    tools:showIn="@layout/activity_main">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/txv_no_connectivity"
+    <fragment
+        class="com.udacity.tsato.popularmovies.MovieListFragment"
+        android:id="@+id/frag_movie_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:visibility="visible"
-        android:text="@string/error_connectivity_needed"/>
-    <GridView
-        android:id="@+id/grv_thumbnails"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="0dp"
-        android:horizontalSpacing="0dp"
-        android:gravity="center"
-        android:stretchMode="columnWidth"/>
-    <ProgressBar
-        android:id="@+id/progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone"/>
-</RelativeLayout>
+        android:layout_height="match_parent"/>
+</LinearLayout>

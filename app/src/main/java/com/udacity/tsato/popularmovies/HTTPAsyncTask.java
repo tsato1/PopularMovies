@@ -85,6 +85,12 @@ public class HTTPAsyncTask extends AsyncTask<String, Void, String> {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject j = jsonArray.getJSONObject(i);
 
+                    /*** todo want to store bitmap in MovieItem / change it to string64 and store it into file ***/
+                    ImageView imageView = new ImageView(mContext);
+                    Picasso.with(mContext).load(MainActivity.URL_IMG_BASE + "w500/" + j.getString(MainActivity.JSON_ENTRY_POSTER_PATH)).into(imageView);
+                    imageView.buildDrawingCache();
+                    imageView.setDrawingCacheEnabled(true);
+                    Bitmap bitmap = imageView.getDrawingCache();
 
                     MovieItem item = new MovieItem(
                             j.getString(MainActivity.JSON_ENTRY_POSTER_PATH),
