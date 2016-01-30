@@ -22,11 +22,11 @@ import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 
 public class MovieListFragment extends Fragment {
-    private static String url = MainActivity.URL_END_POINT + MainActivity.FUNC_MOST_POPLR + MainActivity.API_KEY;
+    private static String url = MainActivity.URL_MOVIES_END_POINT + MainActivity.FUNC_MOST_POPLR;
 
     private boolean mIsDualPane;
     private MovieItem mMovieItem;
-    private GridAdapter mGridAdapter = null;
+    private MovieGridAdapter mMovieGridAdapter = null;
     private List<MovieItem> mMovieList = new ArrayList<>();
 
     @Bind(R.id.txv_no_connectivity) TextView mConnectivityTextView;
@@ -57,8 +57,8 @@ public class MovieListFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mGridAdapter = new GridAdapter(getActivity(), R.layout.grid_items, mMovieList);
-        mThumbnailsGridView.setAdapter(mGridAdapter);
+        mMovieGridAdapter = new MovieGridAdapter(getActivity(), R.layout.item_movie_grid, mMovieList);
+        mThumbnailsGridView.setAdapter(mMovieGridAdapter);
         fetchData();
 
         View movieDetailView = getActivity().findViewById(R.id.frag_movie_detail);
@@ -70,7 +70,7 @@ public class MovieListFragment extends Fragment {
         }
 
         if (mIsDualPane) {
-            showMovieDetail(mMovieList.get(0));
+            showMovieDetail(null);
         }
     }
 
@@ -105,7 +105,7 @@ public class MovieListFragment extends Fragment {
     }
 
     public void fetchData() {
-        new HTTPAsyncTask(getActivity(), mMovieList, mGridAdapter, mConnectivityTextView, mProgressBar).execute(url);
+        new GetMainInfoAsync(getActivity(), mMovieList, mMovieGridAdapter, mConnectivityTextView, mProgressBar).execute(url);
     }
 
     @Override
@@ -118,11 +118,11 @@ public class MovieListFragment extends Fragment {
         int id = menuItem.getItemId();
 
         if (id == R.id.action_popular) {
-            url = MainActivity.URL_END_POINT + MainActivity.FUNC_MOST_POPLR + MainActivity.API_KEY;
+            url = MainActivity.URL_MOVIES_END_POINT + MainActivity.FUNC_MOST_POPLR;
             fetchData();
             return true;
         } else if (id == R.id.action_top_rated) {
-            url = MainActivity.URL_END_POINT + MainActivity.FUNC_HIGH_RATED + MainActivity.API_KEY;
+            url = MainActivity.URL_MOVIES_END_POINT + MainActivity.FUNC_HIGH_RATED;
             fetchData();
             return true;
         }

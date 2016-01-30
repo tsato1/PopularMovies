@@ -1,15 +1,11 @@
 package com.udacity.tsato.popularmovies;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,21 +19,19 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class HTTPAsyncTask extends AsyncTask<String, Void, String> {
-    private final String TAG = "HTTPAsyncTask";
-
-    private static boolean isNetworkAvailable = false;
+public class GetMainInfoAsync extends AsyncTask<String, Void, String> {
+    private final String TAG = "GetMainInfoAsync";
 
     private Context mContext;
     private List<MovieItem> mMovielList = new ArrayList<>();
-    private GridAdapter mGridAdapter;
+    private MovieGridAdapter mMovieGridAdapter;
     private TextView mTextView;
     private ProgressBar mProgressBar;
 
-    public HTTPAsyncTask(Context context, List<MovieItem> list, GridAdapter adapter, TextView textView, ProgressBar progressBar) {
+    public GetMainInfoAsync(Context context, List<MovieItem> list, MovieGridAdapter adapter, TextView textView, ProgressBar progressBar) {
         mContext = context;
         mMovielList = list;
-        mGridAdapter = adapter;
+        mMovieGridAdapter = adapter;
         mTextView = textView;
         mProgressBar = progressBar;
     }
@@ -60,9 +54,8 @@ public class HTTPAsyncTask extends AsyncTask<String, Void, String> {
             Response response = okHttpClient.newCall(request).execute();
             if (response.code() == 200) {
                 result = response.body().string();
-                isNetworkAvailable = true;
             }
-            else isNetworkAvailable = false;
+            response.body().close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -73,11 +66,15 @@ public class HTTPAsyncTask extends AsyncTask<String, Void, String> {
     public void onPostExecute(String result) {
         //Log.d(TAG, result);
 
-        mMovielList.clear();
         JSONObject jsonObject = null;
         JSONArray jsonArray = null;
+        mMovielList.clear();
 
-        if (result != null) {
+        if (result == null) {
+            mTextView.setVisibility(View.VISIBLE);
+        } else {
+            mTextView.setVisibility(View.GONE);
+
             try {
                 jsonObject = new JSONObject(result);
                 jsonArray = jsonObject.getJSONArray(MainActivity.JSON_ENTRY_RESULTS);
@@ -85,33 +82,24 @@ public class HTTPAsyncTask extends AsyncTask<String, Void, String> {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject j = jsonArray.getJSONObject(i);
 
-                    /*** todo want to store bitmap in MovieItem / change it to string64 and store it into file ***/
-                    ImageView imageView = new ImageView(mContext);
-                    Picasso.with(mContext).load(MainActivity.URL_IMG_BASE + "w500/" + j.getString(MainActivity.JSON_ENTRY_POSTER_PATH)).into(imageView);
-                    imageView.buildDrawingCache();
-                    imageView.setDrawingCacheEnabled(true);
-                    Bitmap bitmap = imageView.getDrawingCache();
-
                     MovieItem item = new MovieItem(
                             j.getString(MainActivity.JSON_ENTRY_POSTER_PATH),
                             j.getString(MainActivity.JSON_ENTRY_TITLE),
                             j.getString(MainActivity.JSON_ENTRY_RELEASE_DATE),
                             j.getString(MainActivity.JSON_ENTRY_VOTE_AVERAGE),
-                            j.getString(MainActivity.JSON_ENTRY_OVERVIEW)
+                            j.getString(MainActivity.JSON_ENTRY_OVERVIEW),
+                            j.getInt(MainActivity.JSON_ENTRY_ID)
                     );
 
                     mMovielList.add(item);
-                    Log.d(TAG, j.getString(MainActivity.JSON_ENTRY_POSTER_PATH));
+                    //Log.d(TAG, String.valueOf(j.getInt(MainActivity.JSON_ENTRY_ID)));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        if (isNetworkAvailable) mTextView.setVisibility(View.GONE);
-        else mTextView.setVisibility(View.VISIBLE);
-
-        mGridAdapter.notifyDataSetChanged();
+        mMovieGridAdapter.notifyDataSetChanged();
         showProgress(false);
     }
 

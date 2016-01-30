@@ -11,13 +11,13 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class GridAdapter extends BaseAdapter {
+public class MovieGridAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private int mLayoutId;
     private List<MovieItem> mMovieList;
 
-    public GridAdapter(Context context, int layoutId, List<MovieItem> movieList){
+    public MovieGridAdapter(Context context, int layoutId, List<MovieItem> movieList){
         super();
         mContext = context;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

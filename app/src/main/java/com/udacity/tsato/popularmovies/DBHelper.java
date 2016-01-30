@@ -28,7 +28,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     + DBColumns.COL_OVERVIEW + " TEXT NOT NULL,"
                     + DBColumns.COL_RELEASE_DATE + " TEXT NOT NULL,"
                     + DBColumns.COL_VOTE_AVERAGE + " TEXT NOT NULL,"
-                    + DBColumns.COL_REVIEW + " TEXT NOT NULL);"
+                    + DBColumns.COL_REVIEWS + " TEXT NOT NULL);"
             );
         } catch (SQLiteException e) {
             e.printStackTrace();

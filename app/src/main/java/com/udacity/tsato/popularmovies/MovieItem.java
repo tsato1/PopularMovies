@@ -12,13 +12,15 @@ public class MovieItem implements Parcelable {
     String releaseDate;
     String voteAverage;
     String synopsis;
+    int id;
 
-    public MovieItem(String posterPath, String title, String releaseDate, String voteAverage, String synopsis) {
+    public MovieItem(String posterPath, String title, String releaseDate, String voteAverage, String synopsis, int id) {
         this.posterPath = posterPath;
         this.title = title;
         this.releaseDate = releaseDate;
         this.voteAverage = voteAverage;
         this.synopsis = synopsis;
+        this.id = id;
     }
 
     private MovieItem(Parcel in) {
@@ -27,6 +29,7 @@ public class MovieItem implements Parcelable {
         this.releaseDate = in.readString();
         this.voteAverage = in.readString();
         this.synopsis = in.readString();
+        this.id = in.readInt();
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -51,5 +54,6 @@ public class MovieItem implements Parcelable {
         out.writeString(releaseDate);
         out.writeString(voteAverage);
         out.writeString(synopsis);
+        out.writeInt(id);
     }
 }
