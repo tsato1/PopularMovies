@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,12 +25,19 @@ public class GetReviewsAsync extends AsyncTask<String, Void, String> {
     private List<ReviewItem> mReviewList;
     private ReviewListAdapter mListAdapter;
     private ListView mListView;
+    private ProgressBar mProgressBar;
 
-    public GetReviewsAsync(Context context, List<ReviewItem> reviews, ReviewListAdapter listAdapter, ListView listView) {
+    public GetReviewsAsync(Context context, List<ReviewItem> reviews, ReviewListAdapter listAdapter, ListView listView, ProgressBar progressBar) {
         mContext = context;
         mReviewList = reviews;
         mListAdapter = listAdapter;
         mListView = listView;
+        mProgressBar = progressBar;
+    }
+
+    @Override
+    public void onPreExecute() {
+        showProgress(true);
     }
 
     @Override
@@ -82,5 +90,10 @@ public class GetReviewsAsync extends AsyncTask<String, Void, String> {
 
         mListAdapter.notifyDataSetChanged();
         Utility.setListViewHeightBasedOnChildren(mListAdapter, mListView);
+        showProgress(false);
+    }
+
+    private void showProgress(boolean show) {
+        mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 }

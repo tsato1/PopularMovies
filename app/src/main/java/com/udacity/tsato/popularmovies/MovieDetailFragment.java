@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -35,6 +36,8 @@ public class MovieDetailFragment extends Fragment {
     @Bind(R.id.txv_synopsis) TextView mSynopsisTextView;
     @Bind(R.id.lsv_trailers) ListView mTrailerListView;
     @Bind(R.id.lsv_reviews) ListView mReviewListView;
+    @Bind(R.id.progress_trailers) ProgressBar mTrailerProgressBar;
+    @Bind(R.id.progress_reviews) ProgressBar mReviewProgressBar;
 
     private MovieItem mMovieItem;
     private boolean mIsFavorite;
@@ -77,8 +80,8 @@ public class MovieDetailFragment extends Fragment {
             mReleaseDateTextView.setText(movieItem.releaseDate);
             mVoteAverageTextView.setText(movieItem.voteAverage + "/10.0");
             mSynopsisTextView.setText(movieItem.synopsis);
-            new GetTrailersAsync(getActivity(), mTrailerList, mTrailerListAdapter, mTrailerListView).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.id + MainActivity.FUNC_VIDEOS);
-            new GetReviewsAsync(getActivity(), mReviewList, mReviewListAdapter, mReviewListView).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.id + MainActivity.FUNC_REVIEWS);
+            new GetTrailersAsync(getActivity(), mTrailerList, mTrailerListAdapter, mTrailerListView, mTrailerProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.id + MainActivity.FUNC_VIDEOS);
+            new GetReviewsAsync(getActivity(), mReviewList, mReviewListAdapter, mReviewListView, mReviewProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.id + MainActivity.FUNC_REVIEWS);
         }
 
         //todo check against db if item is favorite or not

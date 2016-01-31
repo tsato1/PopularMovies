@@ -82,6 +82,11 @@
                 android:layout_height="wrap_content"
                 android:text="@string/trailers"
                 style="@style/CaptionTextView"/>
+            <ProgressBar
+                android:id="@+id/progress_trailers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
             <ListView
                 android:id="@+id/lsv_trailers"
                 android:layout_width="match_parent"
@@ -92,6 +97,11 @@
                 android:layout_height="wrap_content"
                 android:text="@string/reviews"
                 style="@style/CaptionTextView"/>
+            <ProgressBar
+                android:id="@+id/progress_reviews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
             <ListView
                 android:id="@+id/lsv_reviews"
                 android:layout_width="match_parent"

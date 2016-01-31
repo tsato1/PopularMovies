@@ -3,7 +3,9 @@ package com.udacity.tsato.popularmovies;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,12 +25,19 @@ public class GetTrailersAsync extends AsyncTask<String, Void, String> {
     private List<TrailerItem> mTrailerList;
     private TrailerListAdapter mListAdapter;
     private ListView mListView;
+    private ProgressBar mProgressBar;
 
-    public GetTrailersAsync(Context context, List<TrailerItem> trailers, TrailerListAdapter listAdapter, ListView listView) {
+    public GetTrailersAsync(Context context, List<TrailerItem> trailers, TrailerListAdapter listAdapter, ListView listView, ProgressBar progressBar) {
         mContext = context;
         mTrailerList = trailers;
         mListAdapter = listAdapter;
         mListView = listView;
+        mProgressBar = progressBar;
+    }
+
+    @Override
+    public void onPreExecute() {
+        showProgress(true);
     }
 
     @Override
@@ -81,5 +90,10 @@ public class GetTrailersAsync extends AsyncTask<String, Void, String> {
 
         mListAdapter.notifyDataSetChanged();
         Utility.setListViewHeightBasedOnChildren(mListAdapter, mListView);
+        showProgress(false);
+    }
+
+    private void showProgress(boolean show) {
+        mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 }
