@@ -30,8 +30,6 @@ public class ReviewListAdapter extends BaseAdapter {
         ReviewItem item = mReviewList.get(position);
         ViewHolder viewHolder;
 
-        Log.d("testtest", item.author);
-
         if (convertView == null) {
             convertView = mInflater.inflate(mLayoutId, parent, false);
             viewHolder = new ViewHolder();
@@ -42,8 +40,10 @@ public class ReviewListAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.authorTextView.setText(item.author);
+        viewHolder.authorTextView.setText(mContext.getString(R.string.author) + "  " + item.author);
         viewHolder.contentTextView.setText(item.content);
+        //if (item.content.length() < 200) viewHolder.contentTextView.setText(item.content);
+        //else viewHolder.contentTextView.setText(item.content.substring(0, 200) + "...");
 
         return convertView;
     }

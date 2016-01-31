@@ -9,6 +9,10 @@
 
     <string name="ok">OK</string>
     <string name="error">Error</string>
+    <string name="overview">Overview:</string>
+    <string name="trailers">Trailers:</string>
+    <string name="reviews">Reviews:</string>
+    <string name="author">Author:</string>
 
     <string name="info_nothing_selected">No movie selected</string>
 

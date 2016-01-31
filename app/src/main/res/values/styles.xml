@@ -17,4 +17,13 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="CaptionTextView">
+        <item name="android:textSize">@dimen/caption_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="SeparatorView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/colorBlack</item>
+    </style>
 </resources>

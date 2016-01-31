@@ -9,7 +9,7 @@ import com.squareup.leakcanary.LeakCanary;
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
 
-    static final String API_KEY = "";
+    static final String API_KEY = "0cba6b4bacdd159b108b2d7bc6ffe72b";
     static final String URL_MOVIES_END_POINT = "https://api.themoviedb.org/3";
     static final String URL_MOVIE_END_POINT = "https://api.themoviedb.org/3/movie";
     static final String FUNC_MOST_POPLR = /* URL_MOVIES_END_POINT + */ "/discover/movie?sort_by=popularity.desc&api_key=" + API_KEY;
@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     static final String JSON_ENTRY_ID = "id";
     static final String JSON_ENTRY_AUTHOR = "author";
     static final String JSON_ENTRY_CONTENT = "content";
+    static final String JSON_ENTRY_KEY = "key";
+    static final String JSON_ENTRY_NAME = "name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

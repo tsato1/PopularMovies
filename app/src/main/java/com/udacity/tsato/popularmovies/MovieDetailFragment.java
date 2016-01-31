@@ -2,11 +2,9 @@ package com.udacity.tsato.popularmovies;
 
 import android.app.Fragment;
 import android.content.ContentValues;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,14 +33,18 @@ public class MovieDetailFragment extends Fragment {
     @Bind(R.id.txv_release_date) TextView mReleaseDateTextView;
     @Bind(R.id.txv_vote_average) TextView mVoteAverageTextView;
     @Bind(R.id.txv_synopsis) TextView mSynopsisTextView;
+    @Bind(R.id.lsv_trailers) ListView mTrailerListView;
     @Bind(R.id.lsv_reviews) ListView mReviewListView;
 
     private MovieItem mMovieItem;
     private boolean mIsFavorite;
     private MenuItem mFavoriteMenuItem;
     private MenuItem mUnfavoriteMenuItem;
+
     private List<ReviewItem> mReviewList = new ArrayList<>();
     private ReviewListAdapter mReviewListAdapter = null;
+    private List<TrailerItem> mTrailerList = new ArrayList<>();
+    private TrailerListAdapter mTrailerListAdapter = null;
 
     public static MovieDetailFragment newInstance() {
         MovieDetailFragment fragment = new MovieDetailFragment();
@@ -60,6 +62,8 @@ public class MovieDetailFragment extends Fragment {
 
         mReviewListAdapter = new ReviewListAdapter(getActivity(), R.layout.item_review_list, mReviewList);
         mReviewListView.setAdapter(mReviewListAdapter);
+        mTrailerListAdapter = new TrailerListAdapter(getActivity(), R.layout.item_trailer_list, mTrailerList);
+        mTrailerListView.setAdapter(mTrailerListAdapter);
 
         if (movieItem == null) {
             mMovieDetailLinearLayout.setVisibility(View.GONE);
@@ -68,13 +72,13 @@ public class MovieDetailFragment extends Fragment {
             mMovieDetailLinearLayout.setVisibility(View.VISIBLE);
             mNothingSelectedTextView.setVisibility(View.GONE);
 
-            Picasso.with(getActivity()).load(MainActivity.URL_IMG_BASE + "w500/" + movieItem.posterPath).into(mPosterImageView);
+            Picasso.with(getActivity()).load(MainActivity.URL_IMG_BASE + "w342/" + movieItem.posterPath).into(mPosterImageView);
             mTitleTextView.setText(movieItem.title);
             mReleaseDateTextView.setText(movieItem.releaseDate);
-            mVoteAverageTextView.setText(movieItem.voteAverage);
+            mVoteAverageTextView.setText(movieItem.voteAverage + "/10.0");
             mSynopsisTextView.setText(movieItem.synopsis);
+            new GetTrailersAsync(getActivity(), mTrailerList, mTrailerListAdapter, mTrailerListView).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.id + MainActivity.FUNC_VIDEOS);
             new GetReviewsAsync(getActivity(), mReviewList, mReviewListAdapter, mReviewListView).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.id + MainActivity.FUNC_REVIEWS);
-            //new GetVideosAsync(getActivity()).execute(MainActivity.URL_MOVIES_END_POINT + "/" + movieItem.id + MainActivity.FUNC_VIDEOS);
         }
 
         //todo check against db if item is favorite or not
