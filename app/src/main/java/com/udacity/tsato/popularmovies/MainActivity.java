@@ -9,7 +9,7 @@ import com.squareup.leakcanary.LeakCanary;
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
 
-    static final String API_KEY = "x";
+    static final String API_KEY = "";
     static final String URL_MOVIES_END_POINT = "https://api.themoviedb.org/3";
     static final String URL_MOVIE_END_POINT = "https://api.themoviedb.org/3/movie";
     static final String FUNC_MOST_POPLR = /* URL_MOVIES_END_POINT + */ "/discover/movie?sort_by=popularity.desc&api_key=" + API_KEY;

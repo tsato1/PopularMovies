@@ -1,6 +1,7 @@
 package com.udacity.tsato.popularmovies;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,12 @@ public class TrailerListAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.trailerImageView = (ImageView) convertView.findViewById(R.id.imv_trailer);
             viewHolder.nameTextView = (TextView) convertView.findViewById(R.id.txv_name);
+            viewHolder.trailerImageView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    //todo start a new intent
+                }
+            });
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();

@@ -2,6 +2,7 @@ package com.udacity.tsato.popularmovies;
 
 import android.app.Fragment;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Base64;
@@ -25,6 +26,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MovieDetailFragment extends Fragment {
     @Bind(R.id.txv_nothing_selected) TextView mNothingSelectedTextView;
@@ -173,6 +175,11 @@ public class MovieDetailFragment extends Fragment {
             mIsFavorite = !mIsFavorite;
             return true;
         } else if (id == R.id.action_share) {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, "test");
+            startActivity(intent);
             return true;
         }
 
