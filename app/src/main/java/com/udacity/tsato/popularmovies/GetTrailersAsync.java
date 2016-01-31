@@ -81,7 +81,7 @@ public class GetTrailersAsync extends AsyncTask<String, Void, String> {
                             j.getString(MainActivity.JSON_ENTRY_NAME)
                     );
                     mTrailerList.add(item);
-                    Log.d(TAG, item.name);
+                    Log.d(TAG, item.name + ": " + item.trailer);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

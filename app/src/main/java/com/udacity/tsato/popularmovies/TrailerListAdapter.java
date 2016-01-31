@@ -1,6 +1,8 @@
 package com.udacity.tsato.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +28,7 @@ public class TrailerListAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        TrailerItem item = mTrailerList.get(position);
+        final TrailerItem item = mTrailerList.get(position);
         ViewHolder viewHolder;
 
         if (convertView == null) {
@@ -37,7 +39,11 @@ public class TrailerListAdapter extends BaseAdapter {
             viewHolder.trailerImageView.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-                    //todo start a new intent
+                    String videoId = item.trailer;
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("http://www.youtube.com/watch?v=" + videoId));
+                    intent.putExtra("VIDEO_ID", videoId);
+                    mContext.startActivity(intent);
                 }
             });
             convertView.setTag(viewHolder);
