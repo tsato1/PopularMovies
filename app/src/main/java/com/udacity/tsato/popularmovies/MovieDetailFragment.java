@@ -1,11 +1,15 @@
 package com.udacity.tsato.popularmovies;
 
 import android.app.Fragment;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,7 +30,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MovieDetailFragment extends Fragment {
     @Bind(R.id.txv_nothing_selected) TextView mNothingSelectedTextView;
@@ -77,13 +80,13 @@ public class MovieDetailFragment extends Fragment {
             mMovieDetailLinearLayout.setVisibility(View.VISIBLE);
             mNothingSelectedTextView.setVisibility(View.GONE);
 
-            Picasso.with(getActivity()).load(MainActivity.URL_IMG_BASE + "w342/" + movieItem.posterPath).into(mPosterImageView);
+            Picasso.with(getActivity()).load(MainActivity.URL_IMG_BASE + "w342/" + movieItem.poster).into(mPosterImageView);
             mTitleTextView.setText(movieItem.title);
             mReleaseDateTextView.setText(movieItem.releaseDate);
             mVoteAverageTextView.setText(movieItem.voteAverage + "/10.0");
             mSynopsisTextView.setText(movieItem.synopsis);
-            new GetTrailersAsync(getActivity(), mTrailerList, mTrailerListAdapter, mTrailerListView, mTrailerProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.id + MainActivity.FUNC_VIDEOS);
-            new GetReviewsAsync(getActivity(), mReviewList, mReviewListAdapter, mReviewListView, mReviewProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.id + MainActivity.FUNC_REVIEWS);
+            new GetTrailersAsync(getActivity(), mTrailerList, mTrailerListAdapter, mTrailerListView, mTrailerProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.movie_id + MainActivity.FUNC_VIDEOS);
+            new GetReviewsAsync(getActivity(), mReviewList, mReviewListAdapter, mReviewListView, mReviewProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.movie_id + MainActivity.FUNC_REVIEWS);
         }
 
         //todo check against db if item is favorite or not
@@ -120,34 +123,51 @@ public class MovieDetailFragment extends Fragment {
 
         if (movieItem == null) return;
 
-        /*** encoding poster imageview into string ***/
-        ImageView imageView = new ImageView(getActivity());
-        Picasso.with(getActivity()).load(MainActivity.URL_IMG_BASE + "w500/" + movieItem.posterPath).into(imageView);
-        imageView.buildDrawingCache();
-        imageView.setDrawingCacheEnabled(true);
-        Bitmap bitmap = imageView.getDrawingCache();
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream .toByteArray();
-        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        String encoded = Utility.convertImageViewToString(mPosterImageView);
 
         ContentValues values = new ContentValues();
+        values.clear();
         values.put(DBColumns.COL_TITLE, movieItem.title);
-        values.put(DBColumns.COL_POSTER_PATH, movieItem.posterPath);
+        values.put(DBColumns.COL_POSTER_PATH, movieItem.poster);
         values.put(DBColumns.COL_POSTER, encoded);
         values.put(DBColumns.COL_OVERVIEW, movieItem.synopsis);
         values.put(DBColumns.COL_RELEASE_DATE, movieItem.releaseDate);
         values.put(DBColumns.COL_VOTE_AVERAGE, movieItem.voteAverage);
-        //values.put(DBColumns.COL_REVIEWS, mReviews);
-        //values.put(DBColumns.COL_VIDEOS, mVideos);
+        String[] authors = new String[mReviewList.size()];
+        String[] reviews = new String[mReviewList.size()];
+        for (int i = 0; i < mReviewList.size(); i++) {
+            authors[i] = mReviewList.get(i).author;
+            reviews[i] = mReviewList.get(i).content;
+        }
+        values.put(DBColumns.COL_AUTHOR, Utility.convertArrayToString(authors));
+        values.put(DBColumns.COL_REVIEW, Utility.convertArrayToString(reviews));
+        String[] names = new String[mTrailerList.size()];
+        String[] trailers = new String[mTrailerList.size()];
+        for (int i = 0; i < mTrailerList.size(); i++) {
+            names[i] = mTrailerList.get(i).name;
+            trailers[i] = mTrailerList.get(i).trailer;
+        }
+        values.put(DBColumns.COL_NAME, Utility.convertArrayToString(names));
+        values.put(DBColumns.COL_VIDEO, Utility.convertArrayToString(trailers));
+        getActivity().getContentResolver().insert(DBContentProvider.Movie.TABLE_MOVIES.contentUri, values);
+
+        Cursor c = getActivity().getContentResolver().query(DBContentProvider.Movie.TABLE_MOVIES.contentUri, null, null, null, null);
+        //if (c.moveToLast()) mMovieItem.data_id = c.getInt(c.getColumnIndex(DBColumns.COL_ID));
+//        Log.d(getClass().getSimpleName(), String.valueOf(mMovieItem.data_id));
+//        if (c.moveToFirst()) {
+//            do {
+//                for (int i = 0; i < c.getColumnCount(); i++) {
+//                    Log.d(getClass().getSimpleName(), c.getColumnName(i) + " : " + c.getString(i));
+//                }
+//            } while (c.moveToNext());
+//        }
     }
 
     private void removeFromDB_mMovieItem() {
         if (mMovieItem == null) return;
 
         MovieItem movieItem = mMovieItem;
-
-
+        getActivity().getContentResolver().delete(ContentUris.withAppendedId(DBContentProvider.Movie.TABLE_MOVIES.contentUri, movieItem.data_id), null, null);
     }
 
     @Override
@@ -165,9 +185,9 @@ public class MovieDetailFragment extends Fragment {
 
         if (id == R.id.action_favorite || id == R.id.action_unfavorite) {
             if (mIsFavorite) {
-                //removeFromDB_mMovieItem();
+                removeFromDB_mMovieItem();
             } else {
-                //saveAsFavorite_mMovieItem();
+                saveAsFavorite_mMovieItem();
             }
 
             mFavoriteMenuItem.setVisible(mIsFavorite);
@@ -178,7 +198,7 @@ public class MovieDetailFragment extends Fragment {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_SEND);
             intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT, "test");
+            intent.putExtra(Intent.EXTRA_TEXT, "http://www.youtube.com/watch?v=" + mTrailerList.get(0).trailer);
             startActivity(intent);
             return true;
         }

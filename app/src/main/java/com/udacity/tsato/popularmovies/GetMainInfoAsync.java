@@ -83,6 +83,7 @@ public class GetMainInfoAsync extends AsyncTask<String, Void, String> {
                     JSONObject j = jsonArray.getJSONObject(i);
 
                     MovieItem item = new MovieItem(
+                            0,
                             j.getString(MainActivity.JSON_ENTRY_POSTER_PATH),
                             j.getString(MainActivity.JSON_ENTRY_TITLE),
                             j.getString(MainActivity.JSON_ENTRY_RELEASE_DATE),

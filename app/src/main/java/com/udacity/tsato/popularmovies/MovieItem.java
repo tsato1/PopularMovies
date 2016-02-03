@@ -1,35 +1,35 @@
 package com.udacity.tsato.popularmovies;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
-
 public class MovieItem implements Parcelable {
-    String posterPath;
+    int data_id;
+    String poster;
     String title;
     String releaseDate;
     String voteAverage;
     String synopsis;
-    int id;
+    int movie_id;
 
-    public MovieItem(String posterPath, String title, String releaseDate, String voteAverage, String synopsis, int id) {
-        this.posterPath = posterPath;
+    public MovieItem(int data_id, String poster, String title, String releaseDate, String voteAverage, String synopsis, int movie_id) {
+        this.data_id = data_id;
+        this.poster = poster; // stores poster base64 string for favorite: otherwise stores poster path to the tmdb cloud
         this.title = title;
         this.releaseDate = releaseDate;
         this.voteAverage = voteAverage;
         this.synopsis = synopsis;
-        this.id = id;
+        this.movie_id = movie_id;
     }
 
     private MovieItem(Parcel in) {
-        this.posterPath = in.readString();
+        this.data_id = in.readInt();
+        this.poster = in.readString();
         this.title = in.readString();
         this.releaseDate = in.readString();
         this.voteAverage = in.readString();
         this.synopsis = in.readString();
-        this.id = in.readInt();
+        this.movie_id = in.readInt();
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -49,11 +49,12 @@ public class MovieItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(posterPath);
+        out.writeInt(data_id);
+        out.writeString(poster);
         out.writeString(title);
         out.writeString(releaseDate);
         out.writeString(voteAverage);
         out.writeString(synopsis);
-        out.writeInt(id);
+        out.writeInt(movie_id);
     }
 }
