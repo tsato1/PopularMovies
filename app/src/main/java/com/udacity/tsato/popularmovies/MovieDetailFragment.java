@@ -30,6 +30,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import okhttp3.internal.Util;
 
 public class MovieDetailFragment extends Fragment {
     @Bind(R.id.txv_nothing_selected) TextView mNothingSelectedTextView;
@@ -80,13 +81,40 @@ public class MovieDetailFragment extends Fragment {
             mMovieDetailLinearLayout.setVisibility(View.VISIBLE);
             mNothingSelectedTextView.setVisibility(View.GONE);
 
-            Picasso.with(getActivity()).load(MainActivity.URL_IMG_BASE + "w342/" + movieItem.poster).into(mPosterImageView);
+            if (movieItem.poster != null) {
+                Picasso.with(getActivity()).load(MainActivity.URL_IMG_BASE + "w342/" + movieItem.poster).into(mPosterImageView);
+                new GetTrailersAsync(getActivity(), mTrailerList, mTrailerListAdapter, mTrailerListView, mTrailerProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.movie_id + MainActivity.FUNC_VIDEOS);
+                new GetReviewsAsync(getActivity(), mReviewList, mReviewListAdapter, mReviewListView, mReviewProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.movie_id + MainActivity.FUNC_REVIEWS);
+            } else {
+                Cursor c = getActivity().getContentResolver().query(DBContentProvider.Movie.TABLE_MOVIES.contentUri, null, null, null, null);
+                if (c.moveToPosition(movieItem.data_id - 1)) {
+                    movieItem.poster = c.getString(c.getColumnIndex(DBColumns.COL_POSTER));
+                    mPosterImageView.setImageBitmap(Utility.convertStringToBitmap(movieItem.poster));;
+
+                    String[] authors = Utility.convertStringToArray(c.getString(c.getColumnIndex(DBColumns.COL_AUTHOR)));
+                    String[] reviews = Utility.convertStringToArray(c.getString(c.getColumnIndex(DBColumns.COL_REVIEW)));
+                    for (int i = 0; i < authors.length; i++) {
+                        ReviewItem reviewItem = new ReviewItem(authors[i], reviews[i]);
+                        mReviewList.add(reviewItem);
+                    }
+
+                    String[] names = Utility.convertStringToArray(c.getString(c.getColumnIndex(DBColumns.COL_NAME)));
+                    String[] trailers = Utility.convertStringToArray(c.getString(c.getColumnIndex(DBColumns.COL_VIDEO)));
+                    for (int i = 0; i < names.length; i++) {
+                        TrailerItem trailerItem = new TrailerItem(trailers[i], names[i]);
+                        mTrailerList.add(trailerItem);
+                    }
+                }
+                c.close();
+            }
             mTitleTextView.setText(movieItem.title);
             mReleaseDateTextView.setText(movieItem.releaseDate);
             mVoteAverageTextView.setText(movieItem.voteAverage + "/10.0");
             mSynopsisTextView.setText(movieItem.synopsis);
-            new GetTrailersAsync(getActivity(), mTrailerList, mTrailerListAdapter, mTrailerListView, mTrailerProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.movie_id + MainActivity.FUNC_VIDEOS);
-            new GetReviewsAsync(getActivity(), mReviewList, mReviewListAdapter, mReviewListView, mReviewProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.movie_id + MainActivity.FUNC_REVIEWS);
+            mReviewListAdapter.notifyDataSetChanged();
+            Utility.setListViewHeightBasedOnChildren(mReviewListAdapter, mReviewListView);
+            mTrailerListAdapter.notifyDataSetChanged();
+            Utility.setListViewHeightBasedOnChildren(mTrailerListAdapter, mTrailerListView);
         }
 
         //todo check against db if item is favorite or not
@@ -151,8 +179,9 @@ public class MovieDetailFragment extends Fragment {
         values.put(DBColumns.COL_VIDEO, Utility.convertArrayToString(trailers));
         getActivity().getContentResolver().insert(DBContentProvider.Movie.TABLE_MOVIES.contentUri, values);
 
-        Cursor c = getActivity().getContentResolver().query(DBContentProvider.Movie.TABLE_MOVIES.contentUri, null, null, null, null);
+        //Cursor c = getActivity().getContentResolver().query(DBContentProvider.Movie.TABLE_MOVIES.contentUri, null, null, null, null);
         //if (c.moveToLast()) mMovieItem.data_id = c.getInt(c.getColumnIndex(DBColumns.COL_ID));
+        //c.close();
 //        Log.d(getClass().getSimpleName(), String.valueOf(mMovieItem.data_id));
 //        if (c.moveToFirst()) {
 //            do {

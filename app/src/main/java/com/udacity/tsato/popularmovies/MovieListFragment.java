@@ -26,6 +26,7 @@ import butterknife.OnItemClick;
 public class MovieListFragment extends Fragment {
     private static String url = MainActivity.URL_MOVIES_END_POINT + MainActivity.FUNC_MOST_POPLR;
 
+    private boolean mIsFavoriteShown;
     private boolean mIsDualPane;
     private MovieItem mMovieItem;
     private MovieGridAdapter mMovieGridAdapter = null;
@@ -65,7 +66,6 @@ public class MovieListFragment extends Fragment {
 
         mMovieGridAdapter = new MovieGridAdapter(getActivity(), R.layout.item_movie_grid, mMovieList);
         mThumbnailsGridView.setAdapter(mMovieGridAdapter);
-        fetchFromCloud();
 
         View movieDetailView = getActivity().findViewById(R.id.frag_movie_detail);
         mIsDualPane = movieDetailView != null && movieDetailView.getVisibility() == View.VISIBLE;
@@ -73,7 +73,11 @@ public class MovieListFragment extends Fragment {
         if (savedInstanceState != null) {
             mMovieItem = savedInstanceState.getParcelable("item");
             url = savedInstanceState.getString("url");
+            mIsFavoriteShown = savedInstanceState.getBoolean("isFavoriteShown");
         }
+
+        if (mIsFavoriteShown) loadFromDatabase();
+        else fetchFromCloud();
 
         if (mIsDualPane) {
             showMovieDetail(null);
@@ -98,6 +102,9 @@ public class MovieListFragment extends Fragment {
             }
         } else {
             Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+            if (mIsFavoriteShown) {
+                movieItem.poster = null;
+            }
             intent.putExtra("item", movieItem);
             startActivity(intent);
         }
@@ -108,6 +115,7 @@ public class MovieListFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putParcelable("item", mMovieItem);
         outState.putString("url", url);
+        outState.putBoolean("isFavoriteShown", mIsFavoriteShown);
     }
 
     private void fetchFromCloud() {
@@ -115,9 +123,9 @@ public class MovieListFragment extends Fragment {
     }
 
     private void loadFromDatabase() {
+        mMovieList.clear();
         Cursor c = getActivity().getContentResolver().query(DBContentProvider.Movie.TABLE_MOVIES.contentUri, null, null, null, null);
         if (c.moveToFirst()) {
-            mMovieList.clear();
             do {
                 MovieItem item = new MovieItem(
                         c.getInt(c.getColumnIndex(DBColumns.COL_ID)),
@@ -132,7 +140,11 @@ public class MovieListFragment extends Fragment {
                 mMovieList.add(item);
             } while (c.moveToNext());
         }
+        c.close();
         mMovieGridAdapter.notifyDataSetChanged();
+
+        if (mMovieList.isEmpty()) mConnectivityTextView.setVisibility(View.VISIBLE);
+        else mConnectivityTextView.setVisibility(View.GONE);
     }
 
     @Override
@@ -147,13 +159,19 @@ public class MovieListFragment extends Fragment {
         if (id == R.id.action_popular) {
             url = MainActivity.URL_MOVIES_END_POINT + MainActivity.FUNC_MOST_POPLR;
             fetchFromCloud();
+            mIsFavoriteShown = false;
+            mConnectivityTextView.setText(R.string.error_connectivity_needed);
             return true;
         } else if (id == R.id.action_top_rated) {
             url = MainActivity.URL_MOVIES_END_POINT + MainActivity.FUNC_HIGH_RATED;
             fetchFromCloud();
+            mIsFavoriteShown = false;
+            mConnectivityTextView.setText(R.string.error_connectivity_needed);
             return true;
         } else if (id == R.id.action_favorites) {
+            mIsFavoriteShown = true;
             loadFromDatabase();
+            mConnectivityTextView.setText(R.string.info_no_favorites);
         }
 
         return super.onOptionsItemSelected(menuItem);

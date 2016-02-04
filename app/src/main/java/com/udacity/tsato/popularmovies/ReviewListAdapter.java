@@ -43,8 +43,6 @@ public class ReviewListAdapter extends BaseAdapter {
 
         viewHolder.authorTextView.setText(mContext.getString(R.string.author) + "  " + item.author);
         viewHolder.contentTextView.setText(item.content);
-        //if (item.content.length() < 200) viewHolder.contentTextView.setText(item.content);
-        //else viewHolder.contentTextView.setText(item.content.substring(0, 200) + "...");
 
         return convertView;
     }
