@@ -5,10 +5,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,16 +18,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import okhttp3.internal.Util;
 
 public class MovieDetailFragment extends Fragment {
     @Bind(R.id.txv_nothing_selected) TextView mNothingSelectedTextView;
@@ -49,10 +44,12 @@ public class MovieDetailFragment extends Fragment {
     private boolean mIsFavorite;
     private MenuItem mFavoriteMenuItem;
     private MenuItem mUnfavoriteMenuItem;
+    private int mIndexOfItem;
+    private int mPageCode;
 
-    private List<ReviewItem> mReviewList = new ArrayList<>();
+    private ArrayList<ReviewItem> mReviewList = new ArrayList<>();
     private ReviewListAdapter mReviewListAdapter = null;
-    private List<TrailerItem> mTrailerList = new ArrayList<>();
+    private ArrayList<TrailerItem> mTrailerList = new ArrayList<>();
     private TrailerListAdapter mTrailerListAdapter = null;
 
     public static MovieDetailFragment newInstance() {
@@ -67,39 +64,48 @@ public class MovieDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         ButterKnife.bind(this, view);
 
-        MovieItem movieItem = getArguments().getParcelable("item");
+        mMovieItem = getArguments().getParcelable("item");
+        mIndexOfItem = getArguments().getInt("indexOfItem");
+        mPageCode = getArguments().getInt("pageCode");
+
+        if (savedInstanceState != null) {
+            mIsFavorite = savedInstanceState.getBoolean("isFavorite");
+            mTrailerList = savedInstanceState.getParcelableArrayList("trailerList");
+            mReviewList = savedInstanceState.getParcelableArrayList("reviewList");
+        }
 
         mReviewListAdapter = new ReviewListAdapter(getActivity(), R.layout.item_review_list, mReviewList);
         mReviewListView.setAdapter(mReviewListAdapter);
         mTrailerListAdapter = new TrailerListAdapter(getActivity(), R.layout.item_trailer_list, mTrailerList);
         mTrailerListView.setAdapter(mTrailerListAdapter);
 
-        if (movieItem == null) {
+        if (mMovieItem == null) {
             mMovieDetailLinearLayout.setVisibility(View.GONE);
             mNothingSelectedTextView.setVisibility(View.VISIBLE);
         } else {
             mMovieDetailLinearLayout.setVisibility(View.VISIBLE);
             mNothingSelectedTextView.setVisibility(View.GONE);
 
-            if (movieItem.poster != null) {
-                Picasso.with(getActivity()).load(MainActivity.URL_IMG_BASE + "w342/" + movieItem.poster).into(mPosterImageView);
-                new GetTrailersAsync(getActivity(), mTrailerList, mTrailerListAdapter, mTrailerListView, mTrailerProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.movie_id + MainActivity.FUNC_VIDEOS);
-                new GetReviewsAsync(getActivity(), mReviewList, mReviewListAdapter, mReviewListView, mReviewProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + movieItem.movie_id + MainActivity.FUNC_REVIEWS);
+            if (mPageCode != MovieListFragment.CODE_FAVORITE) {
+                Picasso.with(getActivity()).load(MainActivity.URL_IMG_BASE + "w342/" + mMovieItem.poster).into(mPosterImageView);
+                new GetTrailersAsync(getActivity(), mTrailerList, mTrailerListAdapter, mTrailerListView, mTrailerProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + mMovieItem.movie_id + MainActivity.FUNC_VIDEOS);
+                new GetReviewsAsync(getActivity(), mReviewList, mReviewListAdapter, mReviewListView, mReviewProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + mMovieItem.movie_id + MainActivity.FUNC_REVIEWS);
             } else {
                 Cursor c = getActivity().getContentResolver().query(DBContentProvider.Movie.TABLE_MOVIES.contentUri, null, null, null, null);
-                if (c.moveToPosition(movieItem.data_id - 1)) {
-                    movieItem.poster = c.getString(c.getColumnIndex(DBColumns.COL_POSTER));
-                    mPosterImageView.setImageBitmap(Utility.convertStringToBitmap(movieItem.poster));;
 
+                if (c.moveToPosition(mIndexOfItem)) {
+                    mMovieItem.poster = c.getString(c.getColumnIndex(DBColumns.COL_POSTER));
+                    mPosterImageView.setImageBitmap(Utility.convertStringToBitmap(mMovieItem.poster));
                     String[] authors = Utility.convertStringToArray(c.getString(c.getColumnIndex(DBColumns.COL_AUTHOR)));
                     String[] reviews = Utility.convertStringToArray(c.getString(c.getColumnIndex(DBColumns.COL_REVIEW)));
+                    mReviewList.clear();
                     for (int i = 0; i < authors.length; i++) {
                         ReviewItem reviewItem = new ReviewItem(authors[i], reviews[i]);
                         mReviewList.add(reviewItem);
                     }
-
                     String[] names = Utility.convertStringToArray(c.getString(c.getColumnIndex(DBColumns.COL_NAME)));
                     String[] trailers = Utility.convertStringToArray(c.getString(c.getColumnIndex(DBColumns.COL_VIDEO)));
+                    mTrailerList.clear();
                     for (int i = 0; i < names.length; i++) {
                         TrailerItem trailerItem = new TrailerItem(trailers[i], names[i]);
                         mTrailerList.add(trailerItem);
@@ -107,20 +113,16 @@ public class MovieDetailFragment extends Fragment {
                 }
                 c.close();
             }
-            mTitleTextView.setText(movieItem.title);
-            mReleaseDateTextView.setText(movieItem.releaseDate);
-            mVoteAverageTextView.setText(movieItem.voteAverage + "/10.0");
-            mSynopsisTextView.setText(movieItem.synopsis);
+            mTitleTextView.setText(mMovieItem.title);
+            mReleaseDateTextView.setText(mMovieItem.releaseDate);
+            mVoteAverageTextView.setText(mMovieItem.voteAverage + "/10.0");
+            mSynopsisTextView.setText(mMovieItem.synopsis);
             mReviewListAdapter.notifyDataSetChanged();
             Utility.setListViewHeightBasedOnChildren(mReviewListAdapter, mReviewListView);
             mTrailerListAdapter.notifyDataSetChanged();
             Utility.setListViewHeightBasedOnChildren(mTrailerListAdapter, mTrailerListView);
         }
 
-        //todo check against db if item is favorite or not
-        // set mIsFavorite = true|false;
-
-        mMovieItem = movieItem;
         return view;
     }
 
@@ -135,21 +137,35 @@ public class MovieDetailFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
 
-        if (savedInstanceState != null) {
-            mIsFavorite = savedInstanceState.getBoolean("isFavorite");
-
+        mIsFavorite = false;
+        Cursor c = getActivity().getContentResolver().query(DBContentProvider.Movie.TABLE_MOVIES.contentUri, null, null, null, null);
+        if (c.moveToFirst()) {
+            do {
+                if (mMovieItem.title.equals(c.getString(c.getColumnIndex(DBColumns.COL_TITLE)))) {
+                    mIsFavorite = true;
+                    mMovieItem.data_id = c.getInt(c.getColumnIndex(DBColumns.COL_ID));
+                    Log.d(MovieDetailFragment.class.getSimpleName(), "onActivityCreated() data_id: " + mMovieItem.data_id + " " + mMovieItem.title);
+                    break;
+                }
+            } while (c.moveToNext());
         }
+        c.close();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putBoolean("isFavorite", mIsFavorite);
+        outState.putParcelableArrayList("trailerList", mTrailerList);
+        outState.putParcelableArrayList("reviewList", mReviewList);
     }
 
     private void saveAsFavorite_mMovieItem() {
         MovieItem movieItem = mMovieItem;
 
-        if (movieItem == null) return;
+        if (movieItem == null) {
+            Toast.makeText(getActivity(), R.string.error_item_not_saved, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         String encoded = Utility.convertImageViewToString(mPosterImageView);
 
@@ -179,9 +195,9 @@ public class MovieDetailFragment extends Fragment {
         values.put(DBColumns.COL_VIDEO, Utility.convertArrayToString(trailers));
         getActivity().getContentResolver().insert(DBContentProvider.Movie.TABLE_MOVIES.contentUri, values);
 
-        //Cursor c = getActivity().getContentResolver().query(DBContentProvider.Movie.TABLE_MOVIES.contentUri, null, null, null, null);
-        //if (c.moveToLast()) mMovieItem.data_id = c.getInt(c.getColumnIndex(DBColumns.COL_ID));
-        //c.close();
+        Cursor c = getActivity().getContentResolver().query(DBContentProvider.Movie.TABLE_MOVIES.contentUri, null, null, null, null);
+        if (c.moveToLast()) mMovieItem.data_id = c.getInt(c.getColumnIndex(DBColumns.COL_ID));
+        c.close();
 //        Log.d(getClass().getSimpleName(), String.valueOf(mMovieItem.data_id));
 //        if (c.moveToFirst()) {
 //            do {
@@ -197,6 +213,7 @@ public class MovieDetailFragment extends Fragment {
 
         MovieItem movieItem = mMovieItem;
         getActivity().getContentResolver().delete(ContentUris.withAppendedId(DBContentProvider.Movie.TABLE_MOVIES.contentUri, movieItem.data_id), null, null);
+        Log.d(MovieDetailFragment.class.getSimpleName(), "Movie Deleted. id: " + movieItem.data_id + ", title: " + movieItem.title);
     }
 
     @Override
@@ -212,7 +229,9 @@ public class MovieDetailFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         int id = menuItem.getItemId();
 
-        if (id == R.id.action_favorite || id == R.id.action_unfavorite) {
+        if (id == android.R.id.home) {
+            getActivity().finish();
+        } else if (id == R.id.action_favorite || id == R.id.action_unfavorite) {
             if (mIsFavorite) {
                 removeFromDB_mMovieItem();
             } else {

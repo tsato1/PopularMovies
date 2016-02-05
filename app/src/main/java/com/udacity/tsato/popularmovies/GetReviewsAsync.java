@@ -77,8 +77,8 @@ public class GetReviewsAsync extends AsyncTask<String, Void, String> {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject j = jsonArray.getJSONObject(i);
                     ReviewItem item = new ReviewItem(
-                            j.getString(MainActivity.JSON_ENTRY_AUTHOR),
-                            j.getString(MainActivity.JSON_ENTRY_CONTENT)
+                            j.getString(MainActivity.JSON_ENTRY_AUTHOR).trim(),
+                            j.getString(MainActivity.JSON_ENTRY_CONTENT.trim())
                     );
                     mReviewList.add(item);
                     Log.d(TAG, item.author);

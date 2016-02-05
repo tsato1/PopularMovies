@@ -74,7 +74,7 @@ public class DBContentProvider extends ContentProvider {
 
     @Override
     public Cursor query (Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        //checkUri(uri);
+        checkUri(uri);
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor cursor = db.query(uri.getPathSegments().get(0), projection, appendSelection(uri, selection), appendSelectionArgs(uri, selectionArgs), null, null, sortOrder);
         return cursor;
@@ -82,7 +82,7 @@ public class DBContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        //checkUri(uri);
+        checkUri(uri);
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         final long rowId = db.insertOrThrow(uri.getPathSegments().get(0), null, values);
         Uri returnUri = ContentUris.withAppendedId(uri, rowId);
@@ -92,7 +92,7 @@ public class DBContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        //checkUri(uri);
+        checkUri(uri);
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         final int count = db.update(uri.getPathSegments().get(0), values, appendSelection(uri, selection), appendSelectionArgs(uri, selectionArgs));
         getContext().getContentResolver().notifyChange(uri, null);
@@ -101,7 +101,7 @@ public class DBContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        //checkUri(uri);
+        checkUri(uri);
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         final int count = db.delete(uri.getPathSegments().get(0), appendSelection(uri, selection), appendSelectionArgs(uri, selectionArgs));
         getContext().getContentResolver().notifyChange(uri, null);

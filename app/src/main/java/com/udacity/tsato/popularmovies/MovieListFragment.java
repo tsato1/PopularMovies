@@ -24,10 +24,14 @@ import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 
 public class MovieListFragment extends Fragment {
+    public final static int CODE_MOST_POPULAR = 0;
+    public final static int CODE_HIGH_RATED = 1;
+    public final static int CODE_FAVORITE = 2;
+
     private static String url = MainActivity.URL_MOVIES_END_POINT + MainActivity.FUNC_MOST_POPLR;
 
-    private boolean mIsFavoriteShown;
     private boolean mIsDualPane;
+    private int pageCode;
     private MovieItem mMovieItem;
     private MovieGridAdapter mMovieGridAdapter = null;
     private List<MovieItem> mMovieList = new ArrayList<>();
@@ -73,10 +77,10 @@ public class MovieListFragment extends Fragment {
         if (savedInstanceState != null) {
             mMovieItem = savedInstanceState.getParcelable("item");
             url = savedInstanceState.getString("url");
-            mIsFavoriteShown = savedInstanceState.getBoolean("isFavoriteShown");
+            pageCode = savedInstanceState.getInt("isFavoriteShown");
         }
 
-        if (mIsFavoriteShown) loadFromDatabase();
+        if (pageCode == CODE_FAVORITE) loadFromDatabase();
         else fetchFromCloud();
 
         if (mIsDualPane) {
@@ -102,11 +106,11 @@ public class MovieListFragment extends Fragment {
             }
         } else {
             Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
-            if (mIsFavoriteShown) {
-                movieItem.poster = null;
-            }
+            if (pageCode == CODE_FAVORITE) movieItem.poster = null;
             intent.putExtra("item", movieItem);
-            startActivity(intent);
+            intent.putExtra("indexOfItem", mMovieList.indexOf(movieItem));
+            intent.putExtra("pageCode", pageCode);
+            startActivityForResult(intent, pageCode);
         }
     }
 
@@ -115,7 +119,7 @@ public class MovieListFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putParcelable("item", mMovieItem);
         outState.putString("url", url);
-        outState.putBoolean("isFavoriteShown", mIsFavoriteShown);
+        outState.putInt("isFavoriteShown", pageCode);
     }
 
     private void fetchFromCloud() {
@@ -136,7 +140,7 @@ public class MovieListFragment extends Fragment {
                         c.getString(c.getColumnIndex(DBColumns.COL_OVERVIEW)),
                         c.getInt(c.getColumnIndex(DBColumns.COL_VIDEO))
                 );
-                Log.d(getClass().getSimpleName(), item.data_id + " : " + item.title);
+                Log.d(getClass().getSimpleName(), "movieItem.data_id = " + item.data_id + " : " + item.title);
                 mMovieList.add(item);
             } while (c.moveToNext());
         }
@@ -159,21 +163,44 @@ public class MovieListFragment extends Fragment {
         if (id == R.id.action_popular) {
             url = MainActivity.URL_MOVIES_END_POINT + MainActivity.FUNC_MOST_POPLR;
             fetchFromCloud();
-            mIsFavoriteShown = false;
+            pageCode = CODE_MOST_POPULAR;
             mConnectivityTextView.setText(R.string.error_connectivity_needed);
             return true;
         } else if (id == R.id.action_top_rated) {
             url = MainActivity.URL_MOVIES_END_POINT + MainActivity.FUNC_HIGH_RATED;
             fetchFromCloud();
-            mIsFavoriteShown = false;
+            pageCode = CODE_HIGH_RATED;
             mConnectivityTextView.setText(R.string.error_connectivity_needed);
             return true;
         } else if (id == R.id.action_favorites) {
-            mIsFavoriteShown = true;
             loadFromDatabase();
+            pageCode = CODE_FAVORITE;
             mConnectivityTextView.setText(R.string.info_no_favorites);
         }
 
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case CODE_MOST_POPULAR:
+                url = MainActivity.URL_MOVIES_END_POINT + MainActivity.FUNC_MOST_POPLR;
+                fetchFromCloud();
+                pageCode = CODE_MOST_POPULAR;
+                mConnectivityTextView.setText(R.string.error_connectivity_needed);
+                break;
+            case CODE_HIGH_RATED:
+                url = MainActivity.URL_MOVIES_END_POINT + MainActivity.FUNC_HIGH_RATED;
+                fetchFromCloud();
+                pageCode = CODE_HIGH_RATED;
+                mConnectivityTextView.setText(R.string.error_connectivity_needed);
+                break;
+            case CODE_FAVORITE:
+                loadFromDatabase();
+                pageCode = CODE_FAVORITE;
+                mConnectivityTextView.setText(R.string.info_no_favorites);
+                break;
+        }
     }
 }

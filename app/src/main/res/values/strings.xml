@@ -18,4 +18,5 @@
     <string name="info_no_favorites">No favorite movies added</string>
 
     <string name="error_connectivity_needed">Network connectivity needed</string>
+    <string name="error_item_not_saved">Error: The item was not saved</string>
 </resources>
