@@ -2,6 +2,7 @@ package com.udacity.tsato.popularmovies;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -68,6 +69,9 @@ public class MovieListFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) mThumbnailsGridView.setNumColumns(3);
+        else mThumbnailsGridView.setNumColumns(2);
+
         mMovieGridAdapter = new MovieGridAdapter(getActivity(), R.layout.item_movie_grid, mMovieList);
         mThumbnailsGridView.setAdapter(mMovieGridAdapter);
 
@@ -94,7 +98,7 @@ public class MovieListFragment extends Fragment {
         if (mIsDualPane) {
             MovieDetailFragment movieDetailFragment = (MovieDetailFragment) getFragmentManager().findFragmentById(R.id.frag_movie_detail);
 
-            if (movieDetailFragment == null) {
+            if (movieDetailFragment == null) { //todo : it is null, maybe should use findFragmentByTag
                 movieDetailFragment = MovieDetailFragment.newInstance();
                 Bundle args = new Bundle();
                 args.putParcelable("item", movieItem);

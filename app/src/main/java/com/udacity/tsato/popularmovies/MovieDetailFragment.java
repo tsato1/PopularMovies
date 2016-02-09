@@ -59,19 +59,33 @@ public class MovieDetailFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (container == null) return null;
-
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         ButterKnife.bind(this, view);
-
-        mMovieItem = getArguments().getParcelable("item");
-        mIndexOfItem = getArguments().getInt("indexOfItem");
-        mPageCode = getArguments().getInt("pageCode");
 
         if (savedInstanceState != null) {
             mIsFavorite = savedInstanceState.getBoolean("isFavorite");
             mTrailerList = savedInstanceState.getParcelableArrayList("trailerList");
             mReviewList = savedInstanceState.getParcelableArrayList("reviewList");
+        }
+
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+
+        if (getArguments() != null) {
+            mMovieItem = getArguments().getParcelable("item");
+            mIndexOfItem = getArguments().getInt("indexOfItem");
+            mPageCode = getArguments().getInt("pageCode");
         }
 
         mReviewListAdapter = new ReviewListAdapter(getActivity(), R.layout.item_review_list, mReviewList);
@@ -122,20 +136,6 @@ public class MovieDetailFragment extends Fragment {
             mTrailerListAdapter.notifyDataSetChanged();
             Utility.setListViewHeightBasedOnChildren(mTrailerListAdapter, mTrailerListView);
         }
-
-        return view;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
 
         mIsFavorite = false;
         Cursor c = getActivity().getContentResolver().query(DBContentProvider.Movie.TABLE_MOVIES.contentUri, null, null, null, null);

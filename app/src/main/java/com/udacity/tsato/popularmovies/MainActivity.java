@@ -1,14 +1,14 @@
 package com.udacity.tsato.popularmovies;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.squareup.leakcanary.LeakCanary;
 
 public class MainActivity extends AppCompatActivity {
-    private final String TAG = "MainActivity";
-
     static final String API_KEY = "";
     static final String URL_MOVIES_END_POINT = "https://api.themoviedb.org/3";
     static final String URL_MOVIE_END_POINT = "https://api.themoviedb.org/3/movie";
@@ -39,3 +39,4 @@ public class MainActivity extends AppCompatActivity {
         LeakCanary.install(getApplication());
     }
 }
+
