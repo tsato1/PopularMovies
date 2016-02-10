@@ -39,7 +39,7 @@ public class MovieGridAdapter extends BaseAdapter {
         }
 
         if (item.data_id == 0) {
-            Picasso.with(mContext).load(MainActivity.URL_IMG_BASE + "w500/" + item.poster).into(viewHolder.thumbnailImageView);
+            Picasso.with(mContext).load(MainActivity.URL_IMG_BASE + "w185/" + item.poster).into(viewHolder.thumbnailImageView);
         } else {
             viewHolder.thumbnailImageView.setImageBitmap(Utility.convertStringToBitmap(item.poster));
         }

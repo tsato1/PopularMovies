@@ -57,6 +57,11 @@ public class MovieDetailFragment extends Fragment {
         return fragment;
     }
 
+    public MovieDetailFragment() {
+        super();
+        setArguments(new Bundle());
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
@@ -82,6 +87,10 @@ public class MovieDetailFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
 
+        setUpLayout();
+    }
+
+    void setUpLayout() {
         if (getArguments() != null) {
             mMovieItem = getArguments().getParcelable("item");
             mIndexOfItem = getArguments().getInt("indexOfItem");
@@ -94,6 +103,7 @@ public class MovieDetailFragment extends Fragment {
         mTrailerListView.setAdapter(mTrailerListAdapter);
 
         if (mMovieItem == null) {
+            Log.d("test", "movie item is null");
             mMovieDetailLinearLayout.setVisibility(View.GONE);
             mNothingSelectedTextView.setVisibility(View.VISIBLE);
         } else {

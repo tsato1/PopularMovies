@@ -5,11 +5,16 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.view.MotionEventCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,6 +28,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
+import butterknife.OnTouch;
 
 public class MovieListFragment extends Fragment {
     public final static int CODE_MOST_POPULAR = 0;
@@ -30,6 +36,8 @@ public class MovieListFragment extends Fragment {
     public final static int CODE_FAVORITE = 2;
 
     private static String url = MainActivity.URL_MOVIES_END_POINT + MainActivity.FUNC_MOST_POPLR;
+
+    private static ActionBar actionBar;
 
     private boolean mIsDualPane;
     private int pageCode;
@@ -43,11 +51,57 @@ public class MovieListFragment extends Fragment {
     ProgressBar mProgressBar;
     @Bind(R.id.grv_thumbnails)
     GridView mThumbnailsGridView;
+//    @OnTouch(R.id.grv_thumbnails)
+//    public boolean onTouch(View v, MotionEvent event) {
+//        int action = MotionEventCompat.getActionMasked(event);
+//        Log.d(MainActivity.class.getSimpleName(), "Action was detected");
+//
+//        switch(action) {
+//            case (MotionEvent.ACTION_DOWN):
+//                Log.d(MainActivity.class.getSimpleName(), "Action was DOWN");
+//                actionBar.show();
+//                return true;
+//            default :
+//                return true;
+//        }
+//    }
 
     @OnItemClick(R.id.grv_thumbnails)
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-        showMovieDetail((MovieItem) parent.getItemAtPosition(position));
+        MovieItem item = (MovieItem) parent.getItemAtPosition(position);
+
+        if (mIsDualPane) {
+            Log.d(MovieListFragment.class.getSimpleName(), "You clicked " + item.title + " at " + position);
+            MovieDetailFragment movieDetailFragment = (MovieDetailFragment) getFragmentManager().findFragmentById(R.id.frag_movie_detail);
+
+            Bundle args = movieDetailFragment.getArguments();
+            args.putParcelable("item", item);
+            args.putInt("indexOfItem", position);
+            args.putInt("pageCode", pageCode);
+            movieDetailFragment.setUpLayout();
+        } else {
+            Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+            if (pageCode == CODE_FAVORITE) item.poster = null;
+            intent.putExtra("item", item);
+            intent.putExtra("indexOfItem", position);
+            intent.putExtra("pageCode", pageCode);
+            startActivityForResult(intent, pageCode);
+        }
     }
+
+//    @Override
+//    public boolean onTouch(View view, MotionEvent event) {
+//        int action = MotionEventCompat.getActionMasked(event);
+//        Log.d(MainActivity.class.getSimpleName(), "Action was detected");
+//        switch(action) {
+//            case (MotionEvent.ACTION_DOWN):
+//                Log.d(MainActivity.class.getSimpleName(), "Action was DOWN");
+//                actionBar.show();
+//                return true;
+//            default :
+//                return true;
+//        }
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,6 +109,15 @@ public class MovieListFragment extends Fragment {
 
         ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
+
+        Handler handler = new Handler();
+        int delayTime = 10000;
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                actionBar.hide();
+            }
+        }, delayTime);
 
         return view;
     }
@@ -68,6 +131,8 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) mThumbnailsGridView.setNumColumns(3);
         else mThumbnailsGridView.setNumColumns(2);
@@ -88,33 +153,6 @@ public class MovieListFragment extends Fragment {
         else fetchFromCloud();
 
         if (mIsDualPane) {
-            showMovieDetail(null);
-        }
-    }
-
-    private void showMovieDetail(MovieItem movieItem) {
-        mMovieItem = movieItem;
-
-        if (mIsDualPane) {
-            MovieDetailFragment movieDetailFragment = (MovieDetailFragment) getFragmentManager().findFragmentById(R.id.frag_movie_detail);
-
-            if (movieDetailFragment == null) { //todo : it is null, maybe should use findFragmentByTag
-                movieDetailFragment = MovieDetailFragment.newInstance();
-                Bundle args = new Bundle();
-                args.putParcelable("item", movieItem);
-                movieDetailFragment.setArguments(args);
-
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.frag_movie_detail, movieDetailFragment)
-                        .commit();
-            }
-        } else {
-            Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
-            if (pageCode == CODE_FAVORITE) movieItem.poster = null;
-            intent.putExtra("item", movieItem);
-            intent.putExtra("indexOfItem", mMovieList.indexOf(movieItem));
-            intent.putExtra("pageCode", pageCode);
-            startActivityForResult(intent, pageCode);
         }
     }
 
