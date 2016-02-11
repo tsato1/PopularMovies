@@ -73,6 +73,7 @@ public class GetReviewsAsync extends AsyncTask<String, Void, String> {
             try {
                 jsonObject = new JSONObject(result);
                 jsonArray = jsonObject.getJSONArray(MainActivity.JSON_ENTRY_RESULTS);
+                mReviewList.clear();
 
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject j = jsonArray.getJSONObject(i);

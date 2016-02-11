@@ -2,11 +2,14 @@ package com.udacity.tsato.popularmovies;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 
 public class MovieDetailActivity extends AppCompatActivity {
+    private boolean mIsBlocked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,9 +17,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        if ((getResources().getConfiguration().screenLayout == Configuration.SCREENLAYOUT_SIZE_LARGE
-                || getResources().getConfiguration().screenLayout == Configuration.SCREENLAYOUT_SIZE_XLARGE)
-                && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             finish();
             return;
         }
@@ -26,7 +27,6 @@ public class MovieDetailActivity extends AppCompatActivity {
             fragment.setArguments(getIntent().getExtras());
             getFragmentManager().beginTransaction().add(android.R.id.content, fragment).commit();
         }
-
     }
 
     @Override

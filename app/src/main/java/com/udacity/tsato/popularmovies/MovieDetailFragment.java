@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +32,7 @@ import butterknife.ButterKnife;
 public class MovieDetailFragment extends Fragment {
     @Bind(R.id.txv_nothing_selected) TextView mNothingSelectedTextView;
     @Bind(R.id.lnl_movie_detail) LinearLayout mMovieDetailLinearLayout;
+    @Bind(R.id.rll_header) RelativeLayout mHeaderRelativeLayout;
     @Bind(R.id.imv_poster) ImageView mPosterImageView;
     @Bind(R.id.txv_title) TextView mTitleTextView;
     @Bind(R.id.txv_release_date) TextView mReleaseDateTextView;
@@ -103,15 +106,17 @@ public class MovieDetailFragment extends Fragment {
         mTrailerListView.setAdapter(mTrailerListAdapter);
 
         if (mMovieItem == null) {
-            Log.d("test", "movie item is null");
+            //Log.d("test", "movie item is null");
             mMovieDetailLinearLayout.setVisibility(View.GONE);
             mNothingSelectedTextView.setVisibility(View.VISIBLE);
+            mHeaderRelativeLayout.setVisibility(View.GONE);
         } else {
             mMovieDetailLinearLayout.setVisibility(View.VISIBLE);
             mNothingSelectedTextView.setVisibility(View.GONE);
+            mHeaderRelativeLayout.setVisibility(View.VISIBLE);
 
             if (mPageCode != MovieListFragment.CODE_FAVORITE) {
-                Picasso.with(getActivity()).load(MainActivity.URL_IMG_BASE + "w342/" + mMovieItem.poster).into(mPosterImageView);
+                Picasso.with(getActivity()).load(MainActivity.URL_IMG_BASE + "w185/" + mMovieItem.poster).into(mPosterImageView);
                 new GetTrailersAsync(getActivity(), mTrailerList, mTrailerListAdapter, mTrailerListView, mTrailerProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + mMovieItem.movie_id + MainActivity.FUNC_VIDEOS);
                 new GetReviewsAsync(getActivity(), mReviewList, mReviewListAdapter, mReviewListView, mReviewProgressBar).execute(MainActivity.URL_MOVIE_END_POINT + "/" + mMovieItem.movie_id + MainActivity.FUNC_REVIEWS);
             } else {
@@ -145,21 +150,21 @@ public class MovieDetailFragment extends Fragment {
             Utility.setListViewHeightBasedOnChildren(mReviewListAdapter, mReviewListView);
             mTrailerListAdapter.notifyDataSetChanged();
             Utility.setListViewHeightBasedOnChildren(mTrailerListAdapter, mTrailerListView);
-        }
 
-        mIsFavorite = false;
-        Cursor c = getActivity().getContentResolver().query(DBContentProvider.Movie.TABLE_MOVIES.contentUri, null, null, null, null);
-        if (c.moveToFirst()) {
-            do {
-                if (mMovieItem.title.equals(c.getString(c.getColumnIndex(DBColumns.COL_TITLE)))) {
-                    mIsFavorite = true;
-                    mMovieItem.data_id = c.getInt(c.getColumnIndex(DBColumns.COL_ID));
-                    Log.d(MovieDetailFragment.class.getSimpleName(), "onActivityCreated() data_id: " + mMovieItem.data_id + " " + mMovieItem.title);
-                    break;
-                }
-            } while (c.moveToNext());
+            mIsFavorite = false;
+            Cursor c = getActivity().getContentResolver().query(DBContentProvider.Movie.TABLE_MOVIES.contentUri, null, null, null, null);
+            if (c.moveToFirst()) {
+                do {
+                    if (mMovieItem.title.equals(c.getString(c.getColumnIndex(DBColumns.COL_TITLE)))) {
+                        mIsFavorite = true;
+                        mMovieItem.data_id = c.getInt(c.getColumnIndex(DBColumns.COL_ID));
+                        Log.d(MovieDetailFragment.class.getSimpleName(), "onActivityCreated() data_id: " + mMovieItem.data_id + " " + mMovieItem.title);
+                        break;
+                    }
+                } while (c.moveToNext());
+            }
+            c.close();
         }
-        c.close();
     }
 
     @Override

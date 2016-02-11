@@ -2,12 +2,12 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <RelativeLayout
+            android:id="@+id/rll_header"
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:background="@color/colorBackgroundYellow">
@@ -23,9 +23,10 @@
 
         <TextView
             android:id="@+id/txv_nothing_selected"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:layout_centerInParent="true"
             android:text="@string/info_nothing_selected"
             android:visibility="gone"/>
 
@@ -36,11 +37,12 @@
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin">
+            android:paddingTop="120dp">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingTop="@dimen/activity_horizontal_margin"
                 android:paddingBottom="@dimen/activity_horizontal_margin">
                 <ImageView
                     android:id="@+id/imv_poster"
@@ -90,7 +92,8 @@
             <ListView
                 android:id="@+id/lsv_trailers"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:minHeight="50dp"/>
             <View style="@style/SeparatorView"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -105,7 +108,8 @@
             <ListView
                 android:id="@+id/lsv_reviews"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:minHeight="50dp"/>
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </ScrollView>

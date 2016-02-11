@@ -6,9 +6,8 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,16 +27,15 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
-import butterknife.OnTouch;
 
 public class MovieListFragment extends Fragment {
+    private final static String TAG = MovieListFragment.class.getSimpleName();
+
     public final static int CODE_MOST_POPULAR = 0;
     public final static int CODE_HIGH_RATED = 1;
     public final static int CODE_FAVORITE = 2;
 
     private static String url = MainActivity.URL_MOVIES_END_POINT + MainActivity.FUNC_MOST_POPLR;
-
-    private static ActionBar actionBar;
 
     private boolean mIsDualPane;
     private int pageCode;
@@ -51,21 +49,6 @@ public class MovieListFragment extends Fragment {
     ProgressBar mProgressBar;
     @Bind(R.id.grv_thumbnails)
     GridView mThumbnailsGridView;
-//    @OnTouch(R.id.grv_thumbnails)
-//    public boolean onTouch(View v, MotionEvent event) {
-//        int action = MotionEventCompat.getActionMasked(event);
-//        Log.d(MainActivity.class.getSimpleName(), "Action was detected");
-//
-//        switch(action) {
-//            case (MotionEvent.ACTION_DOWN):
-//                Log.d(MainActivity.class.getSimpleName(), "Action was DOWN");
-//                actionBar.show();
-//                return true;
-//            default :
-//                return true;
-//        }
-//    }
-
     @OnItemClick(R.id.grv_thumbnails)
     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
         MovieItem item = (MovieItem) parent.getItemAtPosition(position);
@@ -89,35 +72,12 @@ public class MovieListFragment extends Fragment {
         }
     }
 
-//    @Override
-//    public boolean onTouch(View view, MotionEvent event) {
-//        int action = MotionEventCompat.getActionMasked(event);
-//        Log.d(MainActivity.class.getSimpleName(), "Action was detected");
-//        switch(action) {
-//            case (MotionEvent.ACTION_DOWN):
-//                Log.d(MainActivity.class.getSimpleName(), "Action was DOWN");
-//                actionBar.show();
-//                return true;
-//            default :
-//                return true;
-//        }
-//    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_list, container, false);
 
         ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
-
-        Handler handler = new Handler();
-        int delayTime = 10000;
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                actionBar.hide();
-            }
-        }, delayTime);
 
         return view;
     }
@@ -131,8 +91,6 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) mThumbnailsGridView.setNumColumns(3);
         else mThumbnailsGridView.setNumColumns(2);
@@ -182,7 +140,7 @@ public class MovieListFragment extends Fragment {
                         c.getString(c.getColumnIndex(DBColumns.COL_OVERVIEW)),
                         c.getInt(c.getColumnIndex(DBColumns.COL_VIDEO))
                 );
-                Log.d(getClass().getSimpleName(), "movieItem.data_id = " + item.data_id + " : " + item.title);
+                //Log.d(getClass().getSimpleName(), "movieItem.data_id = " + item.data_id + " : " + item.title);
                 mMovieList.add(item);
             } while (c.moveToNext());
         }
