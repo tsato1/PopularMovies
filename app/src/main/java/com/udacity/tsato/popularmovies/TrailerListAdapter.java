@@ -51,7 +51,7 @@ public class TrailerListAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.trailerImageView.setImageResource(R.mipmap.ic_launcher);
+        viewHolder.trailerImageView.setImageResource(R.mipmap.ic_movie_start);
         viewHolder.nameTextView.setText(item.name);
 
         return convertView;

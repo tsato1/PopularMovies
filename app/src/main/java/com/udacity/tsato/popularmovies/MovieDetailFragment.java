@@ -106,7 +106,6 @@ public class MovieDetailFragment extends Fragment {
         mTrailerListView.setAdapter(mTrailerListAdapter);
 
         if (mMovieItem == null) {
-            //Log.d("test", "movie item is null");
             mMovieDetailLinearLayout.setVisibility(View.GONE);
             mNothingSelectedTextView.setVisibility(View.VISIBLE);
             mHeaderRelativeLayout.setVisibility(View.GONE);
@@ -164,6 +163,10 @@ public class MovieDetailFragment extends Fragment {
                 } while (c.moveToNext());
             }
             c.close();
+            if (mFavoriteMenuItem != null && mUnfavoriteMenuItem != null) {
+                mFavoriteMenuItem.setVisible(!mIsFavorite);
+                mUnfavoriteMenuItem.setVisible(mIsFavorite);
+            }
         }
     }
 
