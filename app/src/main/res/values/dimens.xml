@@ -5,5 +5,7 @@
     <dimen name="caption_text_size">20dp</dimen>
     <dimen name="large_text_size">30dp</dimen>
     <dimen name="semi_large_text_size">15dp</dimen>
+    <dimen name="small_text_size">14dp</dimen>
     <dimen name="detail_padding_btw_items">5dp</dimen>
+    <dimen name="height_header">120dp</dimen>
 </resources>

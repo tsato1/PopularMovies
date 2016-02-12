@@ -9,7 +9,7 @@
         <RelativeLayout
             android:id="@+id/rll_header"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="@dimen/height_header"
             android:background="@color/colorBackgroundYellow">
             <TextView
                 android:id="@+id/txv_title"
@@ -37,7 +37,7 @@
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="120dp">
+            android:paddingTop="@dimen/height_header">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -72,11 +72,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/overview"
+                android:textSize="@dimen/caption_text_size"
                 style="@style/CaptionTextView"/>
             <TextView
                 android:id="@+id/txv_synopsis"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/small_text_size"
                 android:paddingBottom="@dimen/detail_padding_btw_items"/>
             <View style="@style/SeparatorView"/>
             <TextView
