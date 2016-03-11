@@ -1,8 +1,8 @@
-# PopularMovies
+# *PopularMovies*
 
 **PopularMovies** is an Android application that showcases movies according three different sorting criteria - Most Popular, High Rated, and Favorites. Detail page is provided for each movie where you can share it on other contents like email, watch trailers, and see other people's review.
 
-Submitted by: **Takahide Sato**
+Udacity Course Project : Submitted by: **Takahide Sato**
 
 ## User Stories
 
