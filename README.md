@@ -4,7 +4,7 @@
 
 Udacity Course Project / Submitted by : **Takahide Sato**
 
-## User Stories
+## Features
 
 The following **required** functionality is completed:
 
