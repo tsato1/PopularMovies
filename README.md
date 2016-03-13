@@ -1,6 +1,6 @@
 # *PopularMovies*
 
-**PopularMovies** is an Android application that showcases movies according three different sorting criteria - Most Popular, High Rated, and Favorites. Detail page is provided for each movie where you can share it on other contents like email, watch trailers, and see other people's review.
+**PopularMovies** is an Android application that showcases movies according to three different sorting criteria - Most Popular, High Rated, and Favorites. Detail page is provided for each movie where you can share it on other contents like email, watch trailers, and see other people's review.
 
 Udacity Course Project / Submitted by : **Takahide Sato**
 
@@ -40,7 +40,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## License
 
-    Copyright [2016] [Takahide Sato]
+    Copyright 2016 Takahide Sato
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
