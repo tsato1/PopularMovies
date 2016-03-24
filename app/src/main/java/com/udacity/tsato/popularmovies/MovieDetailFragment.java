@@ -1,5 +1,7 @@
 package com.udacity.tsato.popularmovies;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -14,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -28,6 +31,8 @@ import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnItemClick;
+import butterknife.OnItemSelected;
 
 public class MovieDetailFragment extends Fragment {
     @Bind(R.id.txv_nothing_selected) TextView mNothingSelectedTextView;
@@ -40,6 +45,14 @@ public class MovieDetailFragment extends Fragment {
     @Bind(R.id.txv_synopsis) TextView mSynopsisTextView;
     @Bind(R.id.lsv_trailers) ListView mTrailerListView;
     @Bind(R.id.lsv_reviews) ListView mReviewListView;
+    @OnItemClick(R.id.lsv_reviews)
+    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+        ReviewItem item = (ReviewItem) parent.getItemAtPosition(position);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(item.author);
+        builder.setMessage(item.content);
+        builder.show();
+    }
     @Bind(R.id.progress_trailers) ProgressBar mTrailerProgressBar;
     @Bind(R.id.progress_reviews) ProgressBar mReviewProgressBar;
 

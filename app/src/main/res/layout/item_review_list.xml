@@ -19,5 +19,6 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:minLines="1"
-        android:maxLines="4"/>
+        android:maxLines="4"
+        android:textSize="@dimen/small_text_size"/>
 </LinearLayout>

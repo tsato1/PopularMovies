@@ -82,7 +82,7 @@ public class GetReviewsAsync extends AsyncTask<String, Void, String> {
                             j.getString(MainActivity.JSON_ENTRY_CONTENT.trim())
                     );
                     mReviewList.add(item);
-                    Log.d(TAG, item.author);
+                    //Log.d(TAG, item.author);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
